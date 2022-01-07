@@ -64,12 +64,14 @@ fn autonexus_loop(x: i32, y: i32, delay: u64) {
     let window_handle = unsafe { FindWindowW(ptr::null_mut(), window.as_ptr()) };
     let hdc_source = unsafe { GetDC(ptr::null_mut()) };
 
+    println!("Monitoring health bar.");
+
     loop {
         let foreground = unsafe { GetForegroundWindow() };
         if foreground == window_handle {
             let pixel = unsafe { winapi::um::wingdi::GetPixel(hdc_source, x, y) };
             if pixel > 10000000 {
-                println!("Nexused");
+                println!("Nexused!");
                 nexus();
             }
 
