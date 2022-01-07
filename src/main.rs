@@ -1,6 +1,6 @@
-extern crate winapi;
-extern crate toml;
 extern crate serde;
+extern crate toml;
+extern crate winapi;
 
 use toml::Value;
 
@@ -9,7 +9,11 @@ use serde::Serialize;
 use self::winapi::ctypes::c_int;
 use self::winapi::um::winuser::*;
 
+use std::convert::TryInto;
 use std::ffi::OsStr;
+use std::fs;
+use std::fs::File;
+use std::io::Read;
 use std::iter::once;
 use std::mem::size_of;
 use std::mem::transmute_copy;
@@ -17,10 +21,6 @@ use std::os::windows::ffi::OsStrExt;
 use std::ptr;
 use std::thread;
 use std::time;
-use std::fs::File;
-use std::io::Read;
-use std::fs;
-use std::convert::TryInto;
 
 #[derive(Serialize, Default)]
 struct Config {
@@ -74,7 +74,6 @@ fn autonexus_loop(x: i32, y: i32, delay: u64) {
                 println!("Nexused!");
                 nexus();
             }
-
         }
 
         thread::sleep(time::Duration::from_millis(delay))
@@ -95,7 +94,7 @@ fn main() {
 
         println!("Config file was not found so a blank one has been created.");
 
-        return
+        return;
     }
 
     let mut config = File::open("config.toml").unwrap();
@@ -105,9 +104,21 @@ fn main() {
 
     let config_data = config_content.parse::<Value>().unwrap();
 
-    let x: i32 = config_data["pixel_x"].as_integer().unwrap().try_into().unwrap();
-    let y: i32 = config_data["pixel_y"].as_integer().unwrap().try_into().unwrap();
-    let delay: u64 = config_data["pixel_y"].as_integer().unwrap().try_into().unwrap();
+    let x: i32 = config_data["pixel_x"]
+        .as_integer()
+        .unwrap()
+        .try_into()
+        .unwrap();
+    let y: i32 = config_data["pixel_y"]
+        .as_integer()
+        .unwrap()
+        .try_into()
+        .unwrap();
+    let delay: u64 = config_data["pixel_y"]
+        .as_integer()
+        .unwrap()
+        .try_into()
+        .unwrap();
 
     if config_data["debug"].as_bool().unwrap() {
         println!("Starting to debug.");
